@@ -3,6 +3,29 @@
 ### 1.Даталогическая схема данных
 ![Даталогическая схема данных:](/assets/schema.png)
 ### 2. SQL запросы
+2.1  
+```sql
+SELECT c.name, SUM(g.price) as order_total 
+FROM customers as c
+JOIN orders o ON o.customer_id = c.id
+JOIN order_items oi ON oi.order_id = o.id
+JOIN goods g ON g.id = oi.good_id
+GROUP BY c.id;
+```
+2.2   
+```sql
+SELECT 
+    p.id AS parent_id,
+    p.name AS parent_name,
+    count(c.id) AS children_count
+FROM categories p
+JOIN categories c ON c.parent_id = p.id
+WHERE p.parent_id IS NULL
+GROUP BY p.id, p.name;
+```
+2.3
+```sql
+```
 ### 3. Сервис
 Заполните .env файл соответствующими значениями переменных   
 Запуск сервиса
