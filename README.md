@@ -23,8 +23,36 @@ JOIN categories c ON c.parent_id = p.id
 WHERE p.parent_id IS NULL
 GROUP BY p.id, p.name;
 ```
-2.3
+2.3  
+2.3.1
 ```sql
+CREATE OR REPLACE VIEW top_5_goods_last_month AS
+WITH RECURSIVE category_path AS (
+    -- Базовый случай: берем все категории
+    SELECT id, name, parent_id, id AS root_id, name AS root_name
+    FROM categories
+    WHERE parent_id IS NULL
+    
+    UNION ALL
+    
+    -- Рекурсия: спускаемся вниз, сохраняя имя корневого родителя
+    SELECT c.id, c.name, c.parent_id, cp.root_id, cp.root_name
+    FROM categories c
+    JOIN category_path cp ON c.parent_id = cp.id
+)
+SELECT 
+    g.name AS "Наименование товара",
+    cp.root_name AS "Категория 1-го уровня",
+    SUM(oi.quantity) AS "Общее количество"
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.id
+JOIN goods g ON oi.goods_id = g.id
+JOIN category_path cp ON g.category_id = cp.id
+-- Фильтр за последний месяц от текущей даты
+WHERE o.order_date >= CURRENT_DATE - INTERVAL '1 month'
+GROUP BY g.id, g.name, cp.root_name
+ORDER BY "Общее количество" DESC
+LIMIT 5;
 ```
 ### 3. Сервис
 Заполните .env файл соответствующими значениями переменных   
