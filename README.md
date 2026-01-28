@@ -102,11 +102,12 @@ CREATE INDEX idx_oi_goods_qty ON order_items (goods_id, quantity);
 shared_buffers: до 25-40% от RAM.  
 work_mem: чтобы сортировка (ORDER BY) происходила в памяти, а не на диске.
 
-### 3. Сервис
+### 3. Сервис. Инструкция по запуску сервиса
 Заполните .env файл соответствующими значениями переменных   
-Запуск сервиса
-```bash
 
+Запуск сервиса:
+```bash
+docker compose up --build
 ```
 
 ## Задание
