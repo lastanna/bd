@@ -10,6 +10,21 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/18
+      # Монтируем скрипт инициализации:
+      - ./init-db:/docker-entrypoint-initdb.d
+
+# REST API
+  api:
+    build: .
+    container_name: fast_api_service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "host=${POSTGRES_HOST} dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=${POSTGRES_PASSWORD}"
+    depends_on:
+      - db
+
 
   pgadmin:
     image: dpage/pgadmin4
