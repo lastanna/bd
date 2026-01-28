@@ -89,7 +89,15 @@ CREATE OR REPLACE PROCEDURE add_item_to_order(p_order_id INT, p_goods_id INT, p_
 LANGUAGE plpgsql AS $$
 DECLARE
     v_available_qty INT;
+    v_order_exists BOOLEAN;
 BEGIN
+    -- Проверка существования заказа
+    SELECT EXISTS(SELECT 1 FROM orders WHERE id = p_order_id) INTO v_order_exists;
+
+    IF NOT v_order_exists THEN
+        RAISE EXCEPTION 'Заказ с ID % не существует', p_order_id;
+    END IF;
+
     -- Проверка наличия и получение текущей цены
     SELECT quantity INTO v_available_qty FROM goods WHERE id = p_goods_id;
 
