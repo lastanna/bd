@@ -5,7 +5,7 @@
 ### 2. SQL запросы
 2.1  
 ```sql
-SELECT c.name, SUM(g.price) as order_total 
+SELECT c.name, SUM(g.price * oi.quantity) as order_total 
 FROM customers as c
 JOIN orders o ON o.customer_id = c.id
 JOIN order_items oi ON oi.order_id = o.id
